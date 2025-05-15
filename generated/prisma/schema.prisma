@@ -1,0 +1,34 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Trafo {
+  id       Int     @id @default(autoincrement())
+  trafo_id String  @unique
+  suhu     Decimal @db.Decimal(10, 1)
+  volt     Decimal @db.Decimal(10, 1)
+  arus1    Decimal @db.Decimal(10, 1)
+  arus2    Decimal @db.Decimal(10, 1)
+  arus3    Decimal @db.Decimal(10, 1)
+  status   Boolean
+  feedback String?
+}
+
+model TrafoLocation {
+  id       String @id @default(uuid())
+  lat      Float
+  lang     Float
+  trafo_id String @unique
+}
