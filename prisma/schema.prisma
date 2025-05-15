@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -14,21 +13,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Trafo {
-  id       Int     @id @default(autoincrement())
-  trafo_id String  @unique
-  suhu     Decimal @db.Decimal(10, 1)
-  volt     Decimal @db.Decimal(10, 1)
-  arus1    Decimal @db.Decimal(10, 1)
-  arus2    Decimal @db.Decimal(10, 1)
-  arus3    Decimal @db.Decimal(10, 1)
-  status   Boolean
-  feedback String?
+enum StatusTrafo {
+  AKTIF
+  TIDAK_AKTIF
 }
 
-model TrafoLocation {
-  id String @id @default(uuid())
-  lat Float
-  lang Float
-  trafo_id String @unique
+model Location {
+  id        String   @id @default(uuid())
+  lat       Float
+  lang      Float
+  nama      String
+  alamat    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  trafos    Trafo[]
+}
+
+model Trafo {
+  id          String       @id
+  status      StatusTrafo  @default(AKTIF)
+  type        String?
+  kapasitas   Decimal?
+  location    Location?    @relation(fields: [locationId], references: [id])
+  locationId  String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  Monitorings Monitoring[]
+}
+
+model Monitoring {
+  id        String   @id @default(uuid())
+  suhu      Decimal  @db.Decimal(10, 1)
+  volt      Decimal  @db.Decimal(10, 1)
+  arus1     Decimal  @db.Decimal(10, 1)
+  arus2     Decimal  @db.Decimal(10, 1)
+  arus3     Decimal  @db.Decimal(10, 1)
+  createdAt DateTime @default(now())
+  Trafo     Trafo?   @relation(fields: [trafoId], references: [id])
+  trafoId   String?
 }
