@@ -48,7 +48,7 @@ model Monitoring {
   arus1     Decimal  @db.Decimal(10, 1)
   arus2     Decimal  @db.Decimal(10, 1)
   arus3     Decimal  @db.Decimal(10, 1)
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(dbgenerated()) @db.Timestamp(6)
   Trafo     Trafo?   @relation(fields: [trafoId], references: [id])
   trafoId   String?
 }
