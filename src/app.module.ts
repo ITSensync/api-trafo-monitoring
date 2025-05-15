@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TrafoModule } from './trafo/trafo.module';
 import { ConfigModule } from '@nestjs/config';
 import { MonitoringModule } from './monitoring/monitoring.module';
+import { LocationModule } from './location/location.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { MonitoringModule } from './monitoring/monitoring.module';
       isGlobal: true,
     }),
     MonitoringModule,
+    LocationModule,
   ],
   controllers: [],
   providers: [],
