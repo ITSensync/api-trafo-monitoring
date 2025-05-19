@@ -21,4 +21,10 @@ export class MonitoringController {
     const result = await this.monitoringService.get();
     return response.status(result.status).send(result);
   }
+
+  @Get('/stats')
+  async getStats(@Res() response: Response) {
+    const result = await this.monitoringService.stats();
+    return response.status(result.status).send(result);
+  }
 }

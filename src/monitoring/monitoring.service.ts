@@ -48,4 +48,32 @@ export class MonitoringService {
       throw new UnprocessableEntityException(error);
     }
   }
+
+  async stats() {
+    try {
+      const allDevice = await this.prismaService.trafo.count();
+      const activeDevice = await this.prismaService.trafo.count({
+        where: {
+          status: 'AKTIF',
+        },
+      });
+      const inactiveDevice = await this.prismaService.trafo.count({
+        where: {
+          status: 'TIDAK_AKTIF',
+        },
+      });
+
+      return {
+        status: HttpStatus.OK,
+        message: 'GET STATISTIC TRAFO SUCCESS!',
+        data: {
+          allDevice,
+          activeDevice,
+          inactiveDevice,
+        },
+      };
+    } catch (error) {
+      throw new UnprocessableEntityException(error);
+    }
+  }
 }
