@@ -13,4 +13,7 @@ export class CreateLocationDto {
 
   @IsString()
   alamat: string;
+
+  @IsString()
+  kode: string;
 }
