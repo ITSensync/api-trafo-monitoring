@@ -44,6 +44,7 @@ async function main() {
         lat: kec.lat,
         lang: kec.lang,
         alamat: kec.alamat,
+        kode: kec.kec_id,
       },
     });
 

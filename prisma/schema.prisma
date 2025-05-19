@@ -20,6 +20,7 @@ enum StatusTrafo {
 
 model Location {
   id        String   @id @default(uuid())
+  kode      String?
   lat       Float
   lang      Float
   nama      String
