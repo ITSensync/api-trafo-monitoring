@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Res,
 } from '@nestjs/common';
 import { LocationService } from './location.service';
@@ -24,14 +25,24 @@ export class LocationController {
   }
 
   @Get()
-  async getAll(@Res() response: Response) {
-    const result = await this.locationService.get();
+  async getAll(
+    @Res() response: Response,
+    @Query('trafo') trafoRelation: string,
+  ) {
+    const result = await this.locationService.get(trafoRelation === 'true');
     return response.status(result.status).send(result);
   }
 
   @Get('/:id')
-  async getOne(@Res() response: Response, @Param('id') id: string) {
-    const result = await this.locationService.getOne(id);
+  async getOne(
+    @Res() response: Response,
+    @Param('id') id: string,
+    @Query('trafo') trafoRelation: string,
+  ) {
+    const result = await this.locationService.getOne(
+      id,
+      trafoRelation === 'true',
+    );
     return response.status(result.status).send(result);
   }
 

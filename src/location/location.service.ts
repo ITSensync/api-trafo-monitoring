@@ -30,9 +30,13 @@ export class LocationService {
     }
   }
 
-  async get(): Promise<Response<Location[]>> {
+  async get(includeTrafo: boolean): Promise<Response<Location[]>> {
     try {
-      const result = await this.prismaService.location.findMany();
+      const result = await this.prismaService.location.findMany({
+        include: {
+          trafos: includeTrafo,
+        },
+      });
 
       return {
         status: HttpStatus.OK,
@@ -45,11 +49,14 @@ export class LocationService {
     }
   }
 
-  async getOne(id: string): Promise<Response<Location>> {
+  async getOne(id: string, includeTrafo: boolean): Promise<Response<Location>> {
     try {
       const locationData = await this.prismaService.location.findFirstOrThrow({
         where: {
           id,
+        },
+        include: {
+          trafos: includeTrafo,
         },
       });
 
