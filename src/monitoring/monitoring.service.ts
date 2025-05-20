@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   HttpStatus,
   Injectable,
@@ -63,6 +65,66 @@ export class MonitoringService {
         },
       });
 
+      const temp90CData = await this.prismaService.$queryRawUnsafe<number>(`
+        SELECT COUNT(*) as count
+        FROM monitoring m
+        INNER JOIN (
+            SELECT trafoId, MAX(createdAt) AS latest
+            FROM monitoring
+            GROUP BY trafoId
+        ) latest_per_trafo
+        ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest
+        WHERE m.suhu > 90;
+      `);
+
+      const volt250Data = await this.prismaService.$queryRawUnsafe<number>(`
+        SELECT COUNT(*) as count
+        FROM monitoring m
+        INNER JOIN (
+            SELECT trafoId, MAX(createdAt) AS latest
+            FROM monitoring
+            GROUP BY trafoId
+        ) latest_per_trafo
+        ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest
+        WHERE m.volt < 250;
+      `);
+
+      const phase1Data = await this.prismaService.$queryRawUnsafe<number>(`
+        SELECT COUNT(*) as count
+        FROM monitoring m
+        INNER JOIN (
+            SELECT trafoId, MAX(createdAt) AS latest
+            FROM monitoring
+            GROUP BY trafoId
+        ) latest_per_trafo
+        ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest
+        WHERE m.arus1 > 300;
+      `);
+
+      const phase2Data = await this.prismaService.$queryRawUnsafe<number>(`
+        SELECT COUNT(*) as count
+        FROM monitoring m
+        INNER JOIN (
+            SELECT trafoId, MAX(createdAt) AS latest
+            FROM monitoring
+            GROUP BY trafoId
+        ) latest_per_trafo
+        ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest
+        WHERE m.arus2 > 300;
+      `);
+
+      const phase3Data = await this.prismaService.$queryRawUnsafe<number>(`
+        SELECT COUNT(*) as count
+        FROM monitoring m
+        INNER JOIN (
+            SELECT trafoId, MAX(createdAt) AS latest
+            FROM monitoring
+            GROUP BY trafoId
+        ) latest_per_trafo
+        ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest
+        WHERE m.arus3 > 300;
+      `);
+
       return {
         status: HttpStatus.OK,
         message: 'GET STATISTIC TRAFO SUCCESS!',
@@ -70,6 +132,11 @@ export class MonitoringService {
           allDevice,
           activeDevice,
           inactiveDevice,
+          moreThan90C: Number(temp90CData[0].count),
+          lessThan250V: Number(volt250Data[0].count),
+          moreThan300A1: Number(phase1Data[0].count),
+          moreThan300A2: Number(phase2Data[0].count),
+          moreThan300A3: Number(phase3Data[0].count),
         },
       };
     } catch (error) {
