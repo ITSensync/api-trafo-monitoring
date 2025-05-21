@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   HttpStatus,
   Injectable,
@@ -67,10 +66,10 @@ export class MonitoringService {
 
       const temp90CData = await this.prismaService.$queryRawUnsafe<number>(`
         SELECT COUNT(*) as count
-        FROM monitoring m
+        FROM Monitoring m
         INNER JOIN (
             SELECT trafoId, MAX(createdAt) AS latest
-            FROM monitoring
+            FROM Monitoring
             GROUP BY trafoId
         ) latest_per_trafo
         ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest
@@ -79,10 +78,10 @@ export class MonitoringService {
 
       const volt250Data = await this.prismaService.$queryRawUnsafe<number>(`
         SELECT COUNT(*) as count
-        FROM monitoring m
+        FROM Monitoring m
         INNER JOIN (
             SELECT trafoId, MAX(createdAt) AS latest
-            FROM monitoring
+            FROM Monitoring
             GROUP BY trafoId
         ) latest_per_trafo
         ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest
@@ -91,10 +90,10 @@ export class MonitoringService {
 
       const phase1Data = await this.prismaService.$queryRawUnsafe<number>(`
         SELECT COUNT(*) as count
-        FROM monitoring m
+        FROM Monitoring m
         INNER JOIN (
             SELECT trafoId, MAX(createdAt) AS latest
-            FROM monitoring
+            FROM Monitoring
             GROUP BY trafoId
         ) latest_per_trafo
         ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest
@@ -103,10 +102,10 @@ export class MonitoringService {
 
       const phase2Data = await this.prismaService.$queryRawUnsafe<number>(`
         SELECT COUNT(*) as count
-        FROM monitoring m
+        FROM Monitoring m
         INNER JOIN (
             SELECT trafoId, MAX(createdAt) AS latest
-            FROM monitoring
+            FROM Monitoring
             GROUP BY trafoId
         ) latest_per_trafo
         ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest
@@ -115,10 +114,10 @@ export class MonitoringService {
 
       const phase3Data = await this.prismaService.$queryRawUnsafe<number>(`
         SELECT COUNT(*) as count
-        FROM monitoring m
+        FROM Monitoring m
         INNER JOIN (
             SELECT trafoId, MAX(createdAt) AS latest
-            FROM monitoring
+            FROM Monitoring
             GROUP BY trafoId
         ) latest_per_trafo
         ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest

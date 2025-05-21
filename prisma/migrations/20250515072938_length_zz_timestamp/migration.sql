@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE `monitoring` MODIFY `createdAt` TIMESTAMP(3) NOT NULL;
+ALTER TABLE `Monitoring` MODIFY `createdAt` TIMESTAMP(3) NOT NULL;
