@@ -47,15 +47,16 @@ model Trafo {
 }
 
 model Monitoring {
-  id        String   @id @default(uuid())
-  suhu      Decimal  @db.Decimal(10, 1)
-  volt      Decimal  @db.Decimal(10, 1)
-  arus1     Decimal  @db.Decimal(10, 1)
-  arus2     Decimal  @db.Decimal(10, 1)
-  arus3     Decimal  @db.Decimal(10, 1)
-  createdAt DateTime @default(dbgenerated()) @db.Timestamp(3)
-  Trafo     Trafo?   @relation(fields: [trafoId], references: [id])
-  trafoId   String?
+  id         String   @id @default(uuid())
+  suhu_cpu   Decimal  @db.Decimal(10, 1)
+  suhu_trafo Decimal  @db.Decimal(10, 1)
+  volt       Decimal  @db.Decimal(10, 1)
+  arus1      Decimal  @db.Decimal(10, 1)
+  arus2      Decimal  @db.Decimal(10, 1)
+  arus3      Decimal  @db.Decimal(10, 1)
+  createdAt  DateTime @default(dbgenerated()) @db.Timestamp(3)
+  Trafo      Trafo?   @relation(fields: [trafoId], references: [id])
+  trafoId    String?
 
   @@map("Monitoring")
 }
