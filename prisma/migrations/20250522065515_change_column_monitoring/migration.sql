@@ -7,6 +7,6 @@
 
 */
 -- AlterTable
-ALTER TABLE `monitoring` DROP COLUMN `suhu`,
+ALTER TABLE `Monitoring` DROP COLUMN `suhu`,
     ADD COLUMN `suhu_cpu` DECIMAL(10, 1) NOT NULL,
     ADD COLUMN `suhu_trafo` DECIMAL(10, 1) NOT NULL;
