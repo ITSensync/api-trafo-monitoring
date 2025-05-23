@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: makanminggu12
+      MYSQL_DATABASE: trafo-monitoring
+      MYSQL_USER: trafo-db
+      MYSQL_PASSWORD: makanminggu12
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    build: .
+    container_name: api-trafo-monitoring
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - '3003:3003'
+    env_file:
+      - .env
+    command: >
+      sh -c "
+      npm run start
+      "
+
+volumes:
+  mysql-data:

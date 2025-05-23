@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -47,7 +48,7 @@ model Trafo {
 }
 
 model Monitoring {
-  id        String   @id @default(uuid())
+  id        Int   @id @default(autoincrement())
   suhu      Decimal  @db.Decimal(10, 1)
   volt      Decimal  @db.Decimal(10, 1)
   arus1     Decimal  @db.Decimal(10, 1)
