@@ -64,7 +64,8 @@ export class MonitoringService {
         },
       });
 
-      const temp90CData = await this.prismaService.$queryRawUnsafe<number>(`
+      const tempTrafo90CData = await this.prismaService
+        .$queryRawUnsafe<number>(`
         SELECT COUNT(*) as count
         FROM Monitoring m
         INNER JOIN (
@@ -73,7 +74,19 @@ export class MonitoringService {
             GROUP BY trafoId
         ) latest_per_trafo
         ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest
-        WHERE m.suhu > 90;
+        WHERE m.suhu_trafo > 90;
+      `);
+
+      const tempCpu90CData = await this.prismaService.$queryRawUnsafe<number>(`
+        SELECT COUNT(*) as count
+        FROM Monitoring m
+        INNER JOIN (
+            SELECT trafoId, MAX(createdAt) AS latest
+            FROM Monitoring
+            GROUP BY trafoId
+        ) latest_per_trafo
+        ON m.trafoId = latest_per_trafo.trafoId AND m.createdAt = latest_per_trafo.latest
+        WHERE m.suhu_cpu > 90;
       `);
 
       const volt250Data = await this.prismaService.$queryRawUnsafe<number>(`
@@ -131,7 +144,8 @@ export class MonitoringService {
           allDevice,
           activeDevice,
           inactiveDevice,
-          moreThan90C: Number(temp90CData[0].count),
+          cpuMoreThan90C: Number(tempCpu90CData[0].count),
+          trafoMoreThan90C: Number(tempTrafo90CData[0].count),
           lessThan250V: Number(volt250Data[0].count),
           moreThan300A1: Number(phase1Data[0].count),
           moreThan300A2: Number(phase2Data[0].count),
