@@ -56,7 +56,7 @@ export class MonitoringService {
     try {
       const latestData = await this.prismaService.monitoring.findMany({
         orderBy: {
-          createdAt: 'asc',
+          createdAt: 'desc',
         },
         take: 1,
       });
