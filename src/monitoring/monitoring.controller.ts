@@ -27,4 +27,10 @@ export class MonitoringController {
     const result = await this.monitoringService.stats();
     return response.status(result.status).send(result);
   }
+
+  @Get('/latest')
+  async getLatest(@Res() response: Response) {
+    const result = await this.monitoringService.getLatest();
+    return response.status(result.status).send(result);
+  }
 }

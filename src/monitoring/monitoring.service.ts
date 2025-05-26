@@ -50,6 +50,25 @@ export class MonitoringService {
     }
   }
 
+  async getLatest() {
+    try {
+      const latestData = await this.prismaService.monitoring.findMany({
+        orderBy: {
+          createdAt: 'asc',
+        },
+        take: 1,
+      });
+      return {
+        status: HttpStatus.OK,
+        message: 'GET LATEST TRAFO DATA SUCCESS!',
+        data: latestData,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new UnprocessableEntityException(error);
+    }
+  }
+
   async stats() {
     try {
       const allDevice = await this.prismaService.trafo.count();
@@ -150,6 +169,7 @@ export class MonitoringService {
           moreThan300A1: Number(phase1Data[0].count),
           moreThan300A2: Number(phase2Data[0].count),
           moreThan300A3: Number(phase3Data[0].count),
+          lastUpdate: new Date(),
         },
       };
     } catch (error) {
