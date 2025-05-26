@@ -33,4 +33,10 @@ export class MonitoringController {
     const result = await this.monitoringService.getLatest();
     return response.status(result.status).send(result);
   }
+
+  @Get('/graph')
+  async getGraph(@Res() response: Response) {
+    const result = await this.monitoringService.graph();
+    return response.status(result.status).send(result);
+  }
 }

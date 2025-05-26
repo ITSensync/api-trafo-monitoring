@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   HttpStatus,
@@ -67,6 +69,33 @@ export class MonitoringService {
       console.log(error);
       throw new UnprocessableEntityException(error);
     }
+  }
+
+  async graph() {
+    const result = await this.prismaService.$queryRawUnsafe<any>(`
+      SELECT 
+        HOUR(createdAt) AS jam,
+        COUNT(*) AS jumlah
+      FROM Monitoring
+      WHERE suhu_trafo > 90
+        AND DATE(createdAt) = CURDATE()
+      GROUP BY HOUR(createdAt)
+      ORDER BY jam
+    `);
+
+    const fullGraphData = Array.from({ length: 24 }, (_, i) => {
+      const found = result.find((r) => r.jam === i);
+      return {
+        jam: i,
+        jumlah: found ? Number(found.jumlah) : 0,
+      };
+    });
+
+    return {
+      status: HttpStatus.OK,
+      message: 'GET TRAFO GRAPH DATA SUCCESS!',
+      data: fullGraphData,
+    };
   }
 
   async stats() {
