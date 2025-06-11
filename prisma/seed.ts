@@ -58,6 +58,8 @@ async function main() {
         type: null,
         kapasitas: null,
         locationId: location.id,
+        lat: 3.5952 + (Math.random() - 0.5) * 0.105,
+        lng: 98.6722 + (Math.random() - 0.5) * 0.105,
       },
     });
 

@@ -5,6 +5,10 @@ export class CreateTrafoDto {
   type: string;
   @IsNumber()
   kapasitas: number;
+  @IsNumber()
+  lat: number;
+  @IsNumber()
+  lng: number;
   @IsString()
   locationId: string;
 }

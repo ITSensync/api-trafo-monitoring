@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
@@ -38,6 +38,8 @@ model Trafo {
   status      StatusTrafo  @default(AKTIF)
   type        String?
   kapasitas   Decimal?
+  lat         Float?
+  lng         Float?
   location    Location?    @relation(fields: [locationId], references: [id])
   locationId  String?
   createdAt   DateTime     @default(now())
@@ -48,7 +50,7 @@ model Trafo {
 }
 
 model Monitoring {
-  id         Int   @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   suhu_cpu   Decimal  @db.Decimal(10, 1)
   suhu_trafo Decimal  @db.Decimal(10, 1)
   volt       Decimal  @db.Decimal(10, 1)
