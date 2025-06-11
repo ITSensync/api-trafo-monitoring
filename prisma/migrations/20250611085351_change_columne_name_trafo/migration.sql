@@ -5,5 +5,5 @@
 
 */
 -- AlterTable
-ALTER TABLE `trafo` DROP COLUMN `lang`,
+ALTER TABLE `Trafo` DROP COLUMN `lang`,
     ADD COLUMN `lng` DOUBLE NULL;

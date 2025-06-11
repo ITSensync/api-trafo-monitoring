@@ -1,3 +1,3 @@
 -- AlterTable
-ALTER TABLE `trafo` ADD COLUMN `lang` DOUBLE NULL,
+ALTER TABLE `Trafo` ADD COLUMN `lang` DOUBLE NULL,
     ADD COLUMN `lat` DOUBLE NULL;
