@@ -59,6 +59,9 @@ export class MonitoringService {
           createdAt: 'desc',
         },
         take: 1,
+        include: {
+          Trafo: true,
+        },
       });
       return {
         status: HttpStatus.OK,
