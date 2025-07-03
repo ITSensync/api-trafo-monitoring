@@ -60,7 +60,11 @@ export class MonitoringService {
         },
         take: 1,
         include: {
-          Trafo: true,
+          Trafo: {
+            include: {
+              location: true,
+            },
+          },
         },
       });
       return {
