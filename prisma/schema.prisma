@@ -63,3 +63,25 @@ model Monitoring {
 
   @@map("Monitoring")
 }
+
+model Log_Location {
+  id       Int      @id @default(autoincrement())
+  trafo_id String
+  lat      Float
+  lng      Float
+  time     DateTime @default(dbgenerated()) @db.Timestamp(3)
+
+  @@map("Log_Location")
+}
+
+model Log_Stats {
+  id          Int      @id @default(autoincrement())
+  time        DateTime @default(dbgenerated()) @db.Timestamp(3)
+  total_temp  Int
+  total_volt  Int
+  total_arus1 Int
+  total_arus2 Int
+  total_arus3 Int
+
+  @@map("Log_Stats")
+}
