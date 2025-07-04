@@ -1,6 +1,7 @@
 import {
   HttpStatus,
   Injectable,
+  Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { Trafo } from '@prisma/client';
@@ -9,10 +10,16 @@ import { Response } from 'src/Response/Response';
 import { CreateTrafoDto } from './dto/create-trafo.dto';
 import { UpdateTrafoDto } from './dto/update-trafo.dto';
 import { generateTrafoId } from 'src/utils/GenerateID';
+import { LogLocationService } from 'src/log_location/log_location.service';
 
 @Injectable()
 export class TrafoService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private logLocationService: LogLocationService,
+  ) {}
+
+  private readonly logger = new Logger();
 
   async getAll(): Promise<Response<Trafo[]>> {
     try {
@@ -86,7 +93,28 @@ export class TrafoService {
 
   async update(trafoDto: UpdateTrafoDto, id: string): Promise<Response<Trafo>> {
     try {
-      console.log(id);
+      const oldTrafoData = await this.prismaService.trafo.findFirstOrThrow({
+        where: {
+          id,
+        },
+      });
+
+      if (
+        oldTrafoData.lat !== trafoDto.lat &&
+        oldTrafoData.lng !== trafoDto.lng &&
+        (trafoDto.lat || trafoDto.lng)
+      ) {
+        this.logger.log('RUNNING INSERT TO LOG LOCATION PROCESS');
+        const body = {
+          lat: oldTrafoData.lat ? oldTrafoData.lat : 0,
+          lng: oldTrafoData.lng ? oldTrafoData.lng : 0,
+          trafo_id: id,
+        };
+
+        const result = await this.logLocationService.create(body);
+        this.logger.log(result.message);
+      }
+
       const updatedTrafo = await this.prismaService.trafo.update({
         data: {
           ...trafoDto,

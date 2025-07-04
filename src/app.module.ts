@@ -5,6 +5,7 @@ import { MonitoringModule } from './monitoring/monitoring.module';
 import { LocationModule } from './location/location.module';
 import { LogStatsModule } from './log_stats/log_stats.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { LogLocationModule } from './log_location/log_location.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     LocationModule,
     LogStatsModule,
     ScheduleModule.forRoot(),
+    LogLocationModule,
   ],
   controllers: [],
   providers: [],
