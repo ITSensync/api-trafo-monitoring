@@ -11,6 +11,7 @@ import { CreateTrafoDto } from './dto/create-trafo.dto';
 import { UpdateTrafoDto } from './dto/update-trafo.dto';
 import { generateTrafoId } from 'src/utils/GenerateID';
 import { LogLocationService } from 'src/log_location/log_location.service';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class TrafoService {
@@ -150,6 +151,33 @@ export class TrafoService {
       };
     } catch (error) {
       throw new UnprocessableEntityException(error);
+    }
+  }
+
+  @Cron('*/5 * * * *') // Setiap 5 menit
+  async checkTrafoActivity() {
+    const result = await this.prismaService.$queryRawUnsafe<{ id: string }[]>(`
+      SELECT t.id
+      FROM Trafo t
+      LEFT JOIN Monitoring m 
+        ON m.trafoId = t.id AND m.createdAt >= NOW() - INTERVAL 30 MINUTE
+      WHERE t.status = 'AKTIF'
+      GROUP BY t.id
+      HAVING COUNT(m.id) = 0;
+    `);
+
+    if (result.length > 0) {
+      const ids = result.map((r) => r.id);
+      await this.prismaService.trafo.updateMany({
+        where: { id: { in: ids } },
+        data: { status: 'TIDAK_AKTIF' },
+      });
+
+      this.logger.log(
+        `[Trafo Status Checker] ${ids.length} trafo dinonaktifkan.`,
+      );
+    } else {
+      this.logger.log('[Trafo Status Checker] Semua trafo aktif OK.');
     }
   }
 }
