@@ -154,7 +154,7 @@ export class TrafoService {
     }
   }
 
-  @Cron('*/5 * * * *') // Setiap 5 menit
+  @Cron('*/10 * * * *') // Setiap 10 menit
   async checkTrafoActivity() {
     const result = await this.prismaService.$queryRawUnsafe<{ id: string }[]>(`
       SELECT t.id
@@ -177,7 +177,9 @@ export class TrafoService {
         `[Trafo Status Checker] ${ids.length} trafo dinonaktifkan.`,
       );
     } else {
-      this.logger.log('[Trafo Status Checker] Semua trafo aktif OK.');
+      this.logger.log(
+        '[Trafo Status Checker] Tidak ada trafo aktif yang tidak realtime.',
+      );
     }
   }
 }
