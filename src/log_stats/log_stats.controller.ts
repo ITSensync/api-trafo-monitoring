@@ -1,4 +1,6 @@
-import { Controller, Get, Post, Res } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { LogStatsService } from './log_stats.service';
 
@@ -13,8 +15,8 @@ export class LogStatsController {
   }
 
   @Get()
-  async getAllLog(@Res() response: Response) {
-    const result = await this.logStatsService.getAll();
+  async getAllLog(@Res() response: Response, @Query() query: any) {
+    const result = await this.logStatsService.getAll(query.date);
     response.status(result.status).send(result);
   }
 }
