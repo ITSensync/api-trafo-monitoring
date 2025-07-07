@@ -36,7 +36,6 @@ export class LogStatsService {
 
       const result = await this.prismaService.log_Stats.create({
         data: {
-          time: new Date(),
           total_temp: statsResult.data.trafoMoreThan90C,
           total_volt: statsResult.data.lessThan250V,
           total_arus1: statsResult.data.moreThan300A1,
@@ -56,9 +55,27 @@ export class LogStatsService {
     }
   }
 
-  async getAll(): Promise<Response<Log_Stats[]>> {
+  async getAll(date: string): Promise<Response<Log_Stats[]>> {
     try {
-      const logData = await this.prismaService.log_Stats.findMany({});
+      const now = new Date();
+      const plus7 = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+      const dateOnly = plus7.toISOString().split('T')[0];
+
+      const targetDate = date ? date : dateOnly;
+
+      const startOfDay = new Date(`${targetDate}T00:00:00.000Z`);
+      const endOfDay = new Date(`${targetDate}T23:59:59.999Z`);
+
+      const filter = {
+        time: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      };
+
+      const logData = await this.prismaService.log_Stats.findMany({
+        where: filter,
+      });
 
       return {
         status: HttpStatus.OK,
