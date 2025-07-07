@@ -156,7 +156,9 @@ export class TrafoService {
 
   @Cron('*/10 * * * *') // Setiap 10 menit
   async checkTrafoActivity() {
-    const result = await this.prismaService.$queryRawUnsafe<{ id: string }[]>(`
+    const resultActive = await this.prismaService.$queryRawUnsafe<
+      { id: string }[]
+    >(`
       SELECT t.id
       FROM Trafo t
       LEFT JOIN Monitoring m 
@@ -166,8 +168,8 @@ export class TrafoService {
       HAVING COUNT(m.id) = 0;
     `);
 
-    if (result.length > 0) {
-      const ids = result.map((r) => r.id);
+    if (resultActive.length > 0) {
+      const ids = resultActive.map((r) => r.id);
       await this.prismaService.trafo.updateMany({
         where: { id: { in: ids } },
         data: { status: 'TIDAK_AKTIF' },
@@ -179,6 +181,32 @@ export class TrafoService {
     } else {
       this.logger.log(
         '[Trafo Status Checker] Tidak ada trafo aktif yang tidak realtime.',
+      );
+    }
+
+    const resultInactive = await this.prismaService.$queryRawUnsafe<
+      { id: string }[]
+    >(`
+      SELECT t.id
+      FROM Trafo t
+      LEFT JOIN Monitoring m 
+        ON m.trafoId = t.id AND m.createdAt < NOW() - INTERVAL 30 MINUTE
+      WHERE t.status = 'TIDAK_AKTIF'
+      GROUP BY t.id
+      HAVING COUNT(m.id) = 0;
+    `);
+
+    if (resultInactive.length > 0) {
+      const ids = resultInactive.map((r) => r.id);
+      await this.prismaService.trafo.updateMany({
+        where: { id: { in: ids } },
+        data: { status: 'AKTIF' },
+      });
+
+      this.logger.log(`[Trafo Status Checker] ${ids.length} trafo diaktifkan.`);
+    } else {
+      this.logger.log(
+        '[Trafo Status Checker] Tidak ada trafo tidak aktif yang kembali realtime.',
       );
     }
   }
