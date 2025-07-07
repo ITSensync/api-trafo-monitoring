@@ -108,16 +108,39 @@ export class MonitoringService {
   async stats() {
     try {
       const allDevice = await this.prismaService.trafo.count();
-      const activeDevice = await this.prismaService.trafo.count({
-        where: {
-          status: 'AKTIF',
+      // const activeDevice = await this.prismaService.trafo.count({
+      //   where: {
+      //     status: 'AKTIF',
+      //   },
+      // });
+      // const inactiveDevice = await this.prismaService.trafo.count({
+      //   where: {
+      //     status: 'TIDAK_AKTIF',
+      //   },
+      // });
+
+      const statusDevice: any[] = await this.prismaService.$queryRawUnsafe(`
+        SELECT 
+          t.id AS trafoId,
+          MAX(m.createdAt) AS last_monitoring_time,
+          CASE 
+            WHEN MAX(m.createdAt) >= NOW() - INTERVAL 30 MINUTE THEN 'AKTIF'
+            ELSE 'TIDAK_AKTIF'
+          END AS status_monitoring
+        FROM Trafo t
+        LEFT JOIN Monitoring m ON m.trafoId = t.id
+        GROUP BY t.id
+      `);
+
+      const count = statusDevice.reduce(
+        (acc, item) => {
+          if (item.status_monitoring === 'AKTIF') acc.aktif++;
+          else if (item.status_monitoring === 'TIDAK_AKTIF') acc.tidakAktif++;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          return acc;
         },
-      });
-      const inactiveDevice = await this.prismaService.trafo.count({
-        where: {
-          status: 'TIDAK_AKTIF',
-        },
-      });
+        { aktif: 0, tidakAktif: 0 },
+      );
 
       const tempTrafo90CData = await this.prismaService
         .$queryRawUnsafe<number>(`
@@ -197,8 +220,8 @@ export class MonitoringService {
         message: 'GET STATISTIC TRAFO SUCCESS!',
         data: {
           allDevice,
-          activeDevice,
-          inactiveDevice,
+          activeDevice: count.aktif,
+          inactiveDevice: count.tidakAktif,
           cpuMoreThan90C: Number(tempCpu90CData[0].count),
           trafoMoreThan90C: Number(tempTrafo90CData[0].count),
           lessThan250V: Number(volt250Data[0].count),

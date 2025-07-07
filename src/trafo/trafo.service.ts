@@ -11,7 +11,7 @@ import { CreateTrafoDto } from './dto/create-trafo.dto';
 import { UpdateTrafoDto } from './dto/update-trafo.dto';
 import { generateTrafoId } from 'src/utils/GenerateID';
 import { LogLocationService } from 'src/log_location/log_location.service';
-import { Cron } from '@nestjs/schedule';
+// import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class TrafoService {
@@ -154,8 +154,8 @@ export class TrafoService {
     }
   }
 
-  @Cron('*/10 * * * *') // Setiap 10 menit
-  async checkTrafoActivity() {
+  // @Cron(CronExpression.EVERY_10_MINUTES) // Setiap 10 menit
+  /* async checkTrafoActivity() {
     const resultActive = await this.prismaService.$queryRawUnsafe<
       { id: string }[]
     >(`
@@ -209,5 +209,5 @@ export class TrafoService {
         '[Trafo Status Checker] Tidak ada trafo tidak aktif yang kembali realtime.',
       );
     }
-  }
+  } */
 }
